@@ -3,9 +3,9 @@ const globalError = (err, req, res, next) => {
   err.status = err.status || "error";
 
   if (process.env.NODE_ENV === "development") {
-    sendErrorToDev();
+    sendErrorToDev(err, res);
   } else {
-    sendErrorToProd();
+    sendErrorToProd(err, res);
   }
 };
 
