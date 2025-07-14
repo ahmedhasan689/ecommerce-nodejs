@@ -1,6 +1,7 @@
 const Category = require("../models/categoryModel");
 const slugify = require("slugify");
 const asyncHandler = require("express-async-handler");
+const ApiError = require("../utils/apiError");
 
 /**
  * @desc Create Category
@@ -21,13 +22,15 @@ exports.getAllCategories = asyncHandler(async (req, res) => {
  * @route   GET /api/v1/categories/:id
  * @access  Public
  */
-exports.getCategory = asyncHandler(async (req, res) => {
+exports.getCategory = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
 
   const category = await Category.findById(id);
 
   if (!category) {
-    res.status(404).json({ msg: `No category found with the given ID: ${id}` });
+    return next(
+      new ApiError(`No category found with the given ID: ${id}`, 404)
+    );
   }
 
   res.status(200).json({ data: category });
@@ -53,7 +56,7 @@ exports.createCategory = asyncHandler(async (req, res) => {
  * @route  PUT /api/v1/categories/:id
  * @access Private
  */
-exports.updateCategory = asyncHandler(async (req, res) => {
+exports.updateCategory = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
   const name = req.body.name;
 
@@ -67,7 +70,9 @@ exports.updateCategory = asyncHandler(async (req, res) => {
   );
 
   if (!category) {
-    res.status(404).json({ msg: `No category found with the given ID: ${id}` });
+    return next(
+      new ApiError(`No category found with the given ID: ${id}`, 404)
+    );
   }
 
   res.status(200).json({ data: category });
@@ -78,13 +83,15 @@ exports.updateCategory = asyncHandler(async (req, res) => {
  * @route  Delete /api/v1/categories/:id
  * @access Private
  */
-exports.deleteCategory = asyncHandler(async (req, res) => {
+exports.deleteCategory = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
 
   const category = await Category.findOneAndDelete({ _id: id }); // OR findByIdAndDelete(id);
 
   if (!category) {
-    res.status(404).json({ msg: `No category found with the given ID: ${id}` });
+    return next(
+      new ApiError(`No category found with the given ID: ${id}`, 404)
+    );
   }
 
   res.status(200).json({ msg: "Successfully Deleted" });
