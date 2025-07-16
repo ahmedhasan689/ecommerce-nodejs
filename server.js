@@ -4,6 +4,7 @@ const morgan = require("morgan");
 const mongoose = require("mongoose");
 const dbConnection = require("./config/database");
 const categoryRoute = require("./routes/categoryRoute");
+const subCategoryRoute = require("./routes/subCategoryRoute");
 const ApiError = require("./utils/apiError");
 const globalError = require("./middlewares/errorMiddleware");
 
@@ -24,6 +25,7 @@ if (process.env.NODE_ENV === "development") {
 
 // Mount Routes
 app.use("/api/v1/categories", categoryRoute);
+app.use("/api/v1/subcategories", subCategoryRoute);
 
 app.all("/{*any}", (req, res, next) => {
   next(new ApiError(`Cannot Find This Route: ${req.originalUrl}`, 400));
@@ -32,7 +34,7 @@ app.all("/{*any}", (req, res, next) => {
 // Global Error Handling Middleware
 app.use(globalError);
 
-const PORT = process.env.PORT;
+const {PORT} = process.env;
 
 const server = app.listen(PORT, () => {
   console.log(`App Running Into ${PORT}`);
