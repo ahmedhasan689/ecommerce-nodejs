@@ -4,6 +4,21 @@ const ApiError = require("../utils/apiError");
 const SubCategoryModel = require("../models/subCategoryModel");
 
 /**
+ * @desc Middleware To Set Category ID Before Validation
+ */
+exports.setCategoryIdToBody = (req, res, next) => {
+  // Nested Route
+  if (!req.body.category) req.body.category = req.params.categoryId;
+  next();
+};
+
+exports.createFilterObject = (req, res, next) => {
+  let filterObject = {};
+  if (req.params.categoryId) filterObject = { category: req.params.categoryId };
+  req.filterObj = filterObject;
+  next();
+};
+/**
  * @desc Get All SubCategories
  * @route Get /api/v1/subcategories
  * @access Public
@@ -13,7 +28,11 @@ exports.getAllSubCategories = asyncHandler(async (req, res) => {
   const limit = req.query.limit * 1 || 10;
   const skip = (page - 1) * limit;
 
-  const subcategories = await SubCategoryModel.find({}).skip(skip).limit(limit);
+  const subcategories = await SubCategoryModel.find(req.filterObj)
+    .skip(skip)
+    .limit(limit)
+    .populate({ path: "category", select: "name slug" });
+
   res
     .status(200)
     .json({ results: subcategories.length, page, data: subcategories });
@@ -27,7 +46,10 @@ exports.getAllSubCategories = asyncHandler(async (req, res) => {
 exports.getSubCategory = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
 
-  const subCategory = await SubCategoryModel.findById(id);
+  const subCategory = await SubCategoryModel.findById(id).populate({
+    path: "category",
+    select: "name slug",
+  });
 
   if (!subCategory) {
     return next(
