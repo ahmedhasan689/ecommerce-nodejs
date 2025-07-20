@@ -1,4 +1,5 @@
 const express = require("express");
+
 const {
   getCategoryValidator,
   createCategoryValidator,
@@ -12,6 +13,7 @@ const {
   createCategory,
   updateCategory,
   deleteCategory,
+  uploadCategoryImage,
 } = require("../services/categoryService");
 
 const router = express.Router();
@@ -25,7 +27,7 @@ router.use("/:categoryId/subcategories", subCategoryRoute);
 router
   .route("/")
   .get(getAllCategories) // Get All Categories
-  .post(createCategoryValidator, createCategory); // Create Category
+  .post(uploadCategoryImage, createCategoryValidator, createCategory); // Create Category
 router
   .route("/:id")
   .get(getCategoryValidator, getCategory) // Get Specific Category

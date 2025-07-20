@@ -1,5 +1,30 @@
+const { v4: uuid } = require("uuid");
+const fs = require("fs");
+const multer = require("multer");
 const Category = require("../models/categoryModel");
 const factory = require("./handlersFactory");
+
+const multerStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const dir = "uploads/categories";
+
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+
+    cb(null, dir);
+  },
+  filename: function (req, file, cb) {
+    // Get Extension
+    const extension = file.mimetype.split("/")[1];
+    const filename = `category-${uuid()}-${Date.now()}.${extension}`;
+    cb(null, filename);
+  },
+});
+
+const upload = multer({ storage: multerStorage });
+
+exports.uploadCategoryImage = upload.single("image");
 
 /**
  * @desc Get All Categories

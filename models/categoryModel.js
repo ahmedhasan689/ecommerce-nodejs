@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-// Shcema
+// Schema
 const categorySchema = new mongoose.Schema(
   {
     name: {
@@ -16,7 +16,7 @@ const categorySchema = new mongoose.Schema(
     },
     image: String,
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 // Model
