@@ -1,5 +1,8 @@
 const Brand = require("../models/brandModel");
 const factory = require("./handlersFactory");
+const { uploadSingleImage } = require("../middlewares/uploadImageMiddleware");
+
+exports.uploadBrandImage = uploadSingleImage("brand", "brands", "image");
 
 /**
  * @desc Get All brands

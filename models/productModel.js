@@ -68,7 +68,7 @@ const productSchema = new mongoose.Schema(
       default: 0,
     },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 // Mongoose Query Middleware
@@ -78,6 +78,31 @@ productSchema.pre(/^find/, function (next) {
     select: "name slug",
   }).populate({ path: "subcategories", select: "name slug" });
   next();
+});
+
+const setImageUrl = (doc) => {
+  if (doc.coverImage) {
+    const imageUrl = `${process.env.BASE_URL}/products/${doc.coverImage}`;
+    doc.coverImage = imageUrl;
+  }
+  if (doc.images) {
+    const imagesList = [];
+    doc.images.forEach((image) => {
+      const imageUrl = `${process.env.BASE_URL}/products/${image}`;
+      imagesList.push(imageUrl);
+    });
+    doc.images = imagesList;
+  }
+};
+
+// Mongoose query For Image [getOne, getAll, update]
+productSchema.post("init", (doc) => {
+  setImageUrl(doc);
+});
+
+// Mongoose query For Image [create]
+productSchema.post("save", (doc) => {
+  setImageUrl(doc);
 });
 
 module.exports = mongoose.model("Product", productSchema);

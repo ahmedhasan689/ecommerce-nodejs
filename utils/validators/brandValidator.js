@@ -25,12 +25,7 @@ exports.createBrandValidator = [
 exports.updateBrandValidator = [
   check("id").isMongoId().withMessage("Invalid Brand ID"),
   check("name")
-    .notEmpty()
-    .withMessage("Name Required")
-    .isLength({ min: 3 })
-    .withMessage("Too Short Brand Name")
-    .isLength({ max: 32 })
-    .withMessage("Too Long Brand Name")
+    .optional()
     .custom((value, { req }) => {
       req.body.slug = slugify(value);
       return true;

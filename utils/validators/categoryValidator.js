@@ -25,12 +25,7 @@ exports.createCategoryValidator = [
 exports.updateCategoryValidator = [
   check("id").isMongoId().withMessage("Invalid Category ID Format!"),
   check("name")
-    .notEmpty()
-    .withMessage("Name Required")
-    .isLength({ min: 3 })
-    .withMessage("Too Short Catagory Name")
-    .isLength({ max: 32 })
-    .withMessage("Too Long Category Name")
+    .optional()
     .custom((value, { req }) => {
       req.body.slug = slugify(value);
       return true;

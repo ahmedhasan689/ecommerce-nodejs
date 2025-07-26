@@ -1,5 +1,18 @@
+const fs = require("fs");
+const { v4: uuid } = require("uuid");
+const multer = require("multer");
+const ApiError = require("../utils/apiError");
 const Product = require("../models/productModel");
 const factory = require("./handlersFactory");
+const { uploadMixOfImages } = require("../middlewares/uploadImageMiddleware");
+
+/**
+ * @desc Middleware To Upload Files
+ */
+exports.uploadProductImages = uploadMixOfImages("product", "products", [
+  { name: "coverImage", maxCount: 1 },
+  { name: "images", maxCount: 10 },
+]);
 
 /**
  * @desc Get All Products

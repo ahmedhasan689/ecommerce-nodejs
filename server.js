@@ -1,9 +1,10 @@
 const express = require("express");
+const path = require("path");
+const qs = require("qs");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
 const mongoose = require("mongoose");
 const dbConnection = require("./config/database");
-const qs = require("qs");
 const categoryRoute = require("./routes/categoryRoute");
 const subCategoryRoute = require("./routes/subCategoryRoute");
 const brandRoute = require("./routes/brandRoute");
@@ -21,6 +22,7 @@ const app = express();
 
 // Middlewares
 app.use(express.json());
+app.use(express.static(path.join(__dirname, "uploads")));
 
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
