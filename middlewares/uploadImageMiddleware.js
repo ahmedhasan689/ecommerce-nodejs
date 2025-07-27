@@ -15,11 +15,18 @@ exports.uploadSingleImage = (modelName, pluralName, fieldName) => {
       cb(null, dir);
     },
     filename: function (req, file, cb) {
+      const specialSuffixes = {
+        avatar: "avatar",
+        image: "thumbs",
+      };
+
+      const suffix = specialSuffixes[file.fieldname] || "";
+
       // Get Extension
       const extension = file.mimetype.split("/")[1];
-      const filename = `${modelName}-${uuid()}-${Date.now()}.${extension}`;
+      const filename = `${modelName}-${uuid()}-${Date.now()}-${suffix}.${extension}`;
       // Set image path to request body
-      req.body.image = filename;
+      req.body[fieldName] = filename;
       cb(null, filename);
     },
   });
@@ -38,7 +45,6 @@ exports.uploadSingleImage = (modelName, pluralName, fieldName) => {
 };
 
 exports.uploadMixOfImages = (modelName, pluralName, fields) => {
-  // 1. إنشاء تخزين مخصص مع ديناميكية كاملة
   const multerStorage = multer.diskStorage({
     destination: function (req, file, cb) {
       const dir = `uploads/${pluralName}`;
@@ -52,7 +58,6 @@ exports.uploadMixOfImages = (modelName, pluralName, fields) => {
     filename: function (req, file, cb) {
       const extension = file.mimetype.split("/")[1];
 
-      // 2. تحديد اللاحقة بناءً على اسم الحقل
       const specialSuffixes = {
         coverImage: "cover",
         images: "thumb",
@@ -76,12 +81,10 @@ exports.uploadMixOfImages = (modelName, pluralName, fields) => {
 
   const upload = multer({ storage: multerStorage, fileFilter: multerFilter });
 
-  // 6. إرجاع middleware معالجة الرفع
   return (req, res, next) => {
     upload.fields(fields)(req, res, (err) => {
       if (err) return next(err);
 
-      // 7. تعيين أسماء الملفات إلى req.body بشكل ديناميكي
       if (req.files) {
         for (const [fieldName, files] of Object.entries(req.files)) {
           if (files.length === 1) {

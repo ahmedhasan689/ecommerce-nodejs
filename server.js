@@ -6,6 +6,7 @@ const morgan = require("morgan");
 const mongoose = require("mongoose");
 const dbConnection = require("./config/database");
 const categoryRoute = require("./routes/categoryRoute");
+const userRoute = require("./routes/userRoute");
 const subCategoryRoute = require("./routes/subCategoryRoute");
 const brandRoute = require("./routes/brandRoute");
 const productRoute = require("./routes/productRoute");
@@ -39,6 +40,7 @@ app.use("/api/v1/categories", categoryRoute);
 app.use("/api/v1/subcategories", subCategoryRoute);
 app.use("/api/v1/brands", brandRoute);
 app.use("/api/v1/products", productRoute);
+app.use("/api/v1/users", userRoute);
 
 app.all("/{*any}", (req, res, next) => {
   next(new ApiError(`Cannot Find This Route: ${req.originalUrl}`, 400));
