@@ -1,4 +1,5 @@
 const express = require("express");
+const authService = require("../services/authService");
 
 const {
   getCategoryValidator,
@@ -27,7 +28,12 @@ router.use("/:categoryId/subcategories", subCategoryRoute);
 router
   .route("/")
   .get(getAllCategories) // Get All Categories
-  .post(uploadCategoryImage, createCategoryValidator, createCategory); // Create Category
+  .post(
+    authService.protect,
+    uploadCategoryImage,
+    createCategoryValidator,
+    createCategory
+  ); // Create Category
 router
   .route("/:id")
   .get(getCategoryValidator, getCategory) // Get Specific Category
