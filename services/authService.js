@@ -63,6 +63,9 @@ exports.login = asyncHandler(async (req, res, next) => {
   });
 });
 
+/**
+ * @desc Protect routes by authentication
+ */
 exports.protect = asyncHandler(async (req, res, next) => {
   // Get Token
   let token;
@@ -101,3 +104,16 @@ exports.protect = asyncHandler(async (req, res, next) => {
   req.user = currentUser;
   next();
 });
+
+/**
+ * @desc Check Permissions of auth user
+ * @param  {...any} roles
+ * @returns
+ */
+exports.allowedTo = (...roles) =>
+  asyncHandler(async (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return next(new ApiError(req.t("auth:invalid_role"), 403));
+    }
+    next();
+  });

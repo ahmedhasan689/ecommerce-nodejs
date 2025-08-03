@@ -1,4 +1,6 @@
 const express = require("express");
+const authService = require("../services/authService");
+
 const {
   getAllProducts,
   createProduct,
@@ -20,12 +22,28 @@ const router = express.Router();
 router
   .route("/")
   .get(getAllProducts)
-  .post(uploadProductImages, createProductValidator, createProduct);
+  .post(
+    authService.protect,
+    authService.allowedTo("manager", "admin"),
+    uploadProductImages,
+    createProductValidator,
+    createProduct
+  );
 
 router
   .route("/:id")
   .get(getProductValidator, getProduct)
-  .put(updateProductValidator, updateProduct)
-  .delete(deleteProductValidator, deleteProduct);
+  .put(
+    authService.protect,
+    authService.allowedTo("manager", "admin"),
+    updateProductValidator,
+    updateProduct
+  )
+  .delete(
+    authService.protect,
+    authService.allowedTo("admin"),
+    deleteProductValidator,
+    deleteProduct
+  );
 
 module.exports = router;

@@ -30,6 +30,7 @@ router
   .get(getAllCategories) // Get All Categories
   .post(
     authService.protect,
+    authService.allowedTo("manager", "admin"),
     uploadCategoryImage,
     createCategoryValidator,
     createCategory
@@ -37,7 +38,18 @@ router
 router
   .route("/:id")
   .get(getCategoryValidator, getCategory) // Get Specific Category
-  .put(uploadCategoryImage, updateCategoryValidator, updateCategory) // Update Specific Category
-  .delete(deleteCategoryValidator, deleteCategory); // Delete Specific Category
+  .put(
+    authService.protect,
+    authService.allowedTo("manager", "admin"),
+    uploadCategoryImage,
+    updateCategoryValidator,
+    updateCategory
+  ) // Update Specific Category
+  .delete(
+    authService.protect,
+    authService.allowedTo("admin"),
+    deleteCategoryValidator,
+    deleteCategory
+  ); // Delete Specific Category
 
 module.exports = router;

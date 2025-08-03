@@ -40,6 +40,7 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
       phoneNumber: req.body.phoneNumber,
       avatar: req.body.avatar,
       email: req.body.email,
+      role: req.body.role,
     },
     {
       new: true,
