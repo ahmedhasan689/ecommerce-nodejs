@@ -9,6 +9,7 @@ exports.createUserValidator = [
     .notEmpty()
     .withMessage("Name Required")
     .custom((value, { req }) => {
+      console.log(slugify(value));
       req.body.slug = slugify(value);
       return true;
     }),

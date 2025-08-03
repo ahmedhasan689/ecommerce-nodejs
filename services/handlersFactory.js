@@ -51,8 +51,8 @@ exports.getOne = (Model) =>
       return next(
         new ApiError(
           `No document found with the given ID: ${req.params.id}`,
-          400,
-        ),
+          400
+        )
       );
     }
 
@@ -72,8 +72,8 @@ exports.updateOne = (Model) =>
       return next(
         new ApiError(
           `No document found with the given ID: ${req.params.id}`,
-          400,
-        ),
+          400
+        )
       );
     }
 
@@ -91,8 +91,8 @@ exports.deleteOne = (Model) =>
       return next(
         new ApiError(
           `No document found with the given ID: ${req.params.id}`,
-          400,
-        ),
+          400
+        )
       );
     }
 

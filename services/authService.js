@@ -1,7 +1,9 @@
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
 const ApiError = require("../utils/apiError");
+const sendEmail = require("../utils/sendEmail");
 const User = require("../models/userModel");
 
 const generateToken = (payload) => {
@@ -61,6 +63,105 @@ exports.login = asyncHandler(async (req, res, next) => {
     },
     token: token,
   });
+});
+
+/**
+ * @desc Forget Passwort
+ * @route POST /api/v1/auth/forgetPassword
+ * @access PUBLIC
+ */
+exports.forgetPassword = asyncHandler(async (req, res, next) => {
+  // Get user by email
+  const user = await User.findOne({ email: req.body.email });
+
+  if (!user) {
+    return next(new ApiError(req.t("common:email_not_found", 404)));
+  }
+
+  // Generate 6-digits
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  const hashedOtp = crypto.createHash("sha256").update(otp).digest("hex");
+
+  user.otp = hashedOtp;
+  user.otpExpiredAt = Date.now() + 10 * 60 * 1000;
+  user.otpVerified = false;
+  await user.save();
+
+  // Send Email
+  try {
+    const message = `Hi ${user.name},\n Your code is : ${otp}`;
+    await sendEmail({
+      email: user.email,
+      subject: "OTP Code",
+      message: message,
+    });
+  } catch (err) {
+    user.otp = undefined;
+    user.otpExpiredAt = undefined;
+    user.otpVerified = undefined;
+    await user.save();
+    return next(new ApiError(`Error While Sending Email: ${err}`, 500));
+  }
+
+  res.status(200).json({ msg: req.t("common:send_email") });
+});
+
+/**
+ * @desc Verify code
+ * @route POST /api/v1/auth/verifyCode
+ * @access PUBLIC
+ */
+exports.verifyCode = asyncHandler(async (req, res, next) => {
+  // Get code
+  const hashedOtp = crypto
+    .createHash("sha256")
+    .update(req.body.code)
+    .digest("hex");
+
+  const user = await User.findOne({
+    otp: hashedOtp,
+    otpExpiredAt: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return next(new ApiError(req.t("common:invalid_code"), 401));
+  }
+
+  user.otpVerified = true;
+  await user.save();
+
+  res.status(200).json({ status: "success" });
+});
+
+/**
+ * @desc Reset Password
+ * @route PUT /api/v1/auth/resetPassword
+ * @access PUBLIC
+ */
+exports.resetPassword = asyncHandler(async (req, res, next) => {
+  // Get User
+  const user = await User.findOne({ email: req.body.email });
+
+  if (!user) {
+    return next(new ApiError(req.t("auth:email_not_found"), 401));
+  }
+
+  if (!user.otpVerified) {
+    return next(new ApiError(req.t("common:code_not_verified"), 401));
+  }
+
+  // Reset password
+  user.password = req.body.new_password;
+  user.otp = undefined;
+  user.otpExpiredAt = undefined;
+  user.otpVerified = undefined;
+  await user.save();
+
+  // Generate new Token
+  const token = generateToken(user._id);
+  res
+    .status(200)
+    .json({ msg: req.t("auth:success_reset_password"), token: token });
 });
 
 /**

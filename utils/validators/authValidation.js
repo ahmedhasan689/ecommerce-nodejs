@@ -1,3 +1,4 @@
+const slugify = require("slugify");
 const { check } = require("express-validator");
 const validatorMiddleware = require("../../middlewares/validatorMiddleware");
 const User = require("../../models/userModel");
@@ -69,6 +70,16 @@ exports.loginValidator = [
     .withMessage("Too Short Password")
     .isLength({ max: 32 })
     .withMessage("Too Long Password"),
+
+  validatorMiddleware,
+];
+
+exports.forgetPasswordValidator = [
+  check("email")
+    .notEmpty()
+    .withMessage("Email Required")
+    .isEmail()
+    .withMessage("Invalid email address"),
 
   validatorMiddleware,
 ];
