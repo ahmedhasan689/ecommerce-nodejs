@@ -68,7 +68,7 @@ const productSchema = new mongoose.Schema(
       default: 0,
     },
   },
-  { timestamps: true }
+  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
 // Mongoose Query Middleware
@@ -103,6 +103,13 @@ productSchema.post("init", (doc) => {
 // Mongoose query For Image [create]
 productSchema.post("save", (doc) => {
   setImageUrl(doc);
+});
+
+// Virtual populate for reviews
+productSchema.virtual("reviews", {
+  ref: "Review",
+  foreignField: "product",
+  localField: "_id",
 });
 
 module.exports = mongoose.model("Product", productSchema);

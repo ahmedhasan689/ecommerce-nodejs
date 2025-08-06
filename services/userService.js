@@ -4,6 +4,7 @@ const User = require("../models/userModel");
 const factory = require("./handlersFactory");
 const { uploadSingleImage } = require("../middlewares/uploadImageMiddleware");
 const ApiError = require("../utils/apiError");
+const generateToken = require("../utils/createToken");
 
 exports.uploadUserAvatar = uploadSingleImage("user", "users", "avatar");
 
@@ -88,3 +89,72 @@ exports.changePassword = asyncHandler(async (req, res, next) => {
  * @access Private
  */
 exports.deleteUser = factory.deleteOne(User);
+
+/**
+ * @desc Get Logged User Information
+ * @route GET /api/v1/users/getLoggedUser
+ * @access Private
+ */
+exports.getLoggedUserInfo = asyncHandler(async (req, res, next) => {
+  req.params.id = req.user._id;
+  next();
+});
+
+/**
+ * @desc Update Logged User Password
+ * @route PUT /api/v1/users/updateMyPassword
+ * @access Private
+ */
+exports.updateLoggedUserPassword = asyncHandler(async (req, res, next) => {
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      password: await bcrypt.hash(req.body.password, 12),
+      passwordChangedAt: Date.now(),
+    },
+    {
+      new: true,
+    }
+  );
+
+  // Generate token
+  const token = generateToken(user._id);
+
+  res.status(200).json({ data: user, token });
+});
+
+/**
+ * @desc Update Logged User Information
+ * @route PUT /api/v1/users/updateLoggedUserInfo
+ * @access Private
+ */
+exports.updateLoggedUserInfo = asyncHandler(async (req, res, next) => {
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      name: req.body.name,
+      email: req.body.email,
+      phoneNumber: req.body.phoneNumber,
+    },
+    {
+      new: true,
+    }
+  );
+
+  res.status(200).json({ data: user });
+});
+
+/**
+ * @desc Deactive Logged User
+ * @route DELETE /api/v1/users/deactiveLoggedUser
+ * @access Private
+ */
+exports.deactiveLoggedUser = asyncHandler(async (req, res, next) => {
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    { active: !req.user.active },
+    { new: true }
+  );
+
+  res.status(200).json({ msg: req.t("common:success"), data: user });
+});

@@ -147,3 +147,78 @@ exports.deleteUserValidator = [
   check("id").isMongoId().withMessage("Invalid User ID Format"),
   validatorMiddleware,
 ];
+
+exports.changeLoggedUserPasswordValidator = [
+  check("currentPassword")
+    .notEmpty()
+    .withMessage("Current Password Required")
+    .custom(async (value, { req }) => {
+      const user = await User.findById(req.user._id);
+
+      if (!user) {
+        throw new Error("There is no user for this ID");
+      }
+
+      const isCorrectPassword = await bcrypt.compare(
+        req.body.currentPassword,
+        user.password
+      );
+
+      if (!isCorrectPassword) {
+        throw new Error("Incorrect current password");
+      }
+    }),
+  check("password")
+    .notEmpty()
+    .withMessage("Password Required")
+    .isLength({ min: 6 })
+    .withMessage("Too Short Password")
+    .isLength({ max: 32 })
+    .withMessage("Too Long Password"),
+  check("passwordConfirm")
+    .notEmpty()
+    .withMessage("Password Confirmation Required")
+    .custom(async (value, { req }) => {
+      if (value !== req.body.password) {
+        return Promise.reject(
+          new Error("Password confirmation does not match the password")
+        );
+      }
+      return true;
+    }),
+  validatorMiddleware,
+];
+
+exports.updateLoggedUserValidator = [
+  check("name")
+    .optional()
+    .custom((value, { req }) => {
+      req.body.slug = slugify(value);
+      return true;
+    }),
+  check("email")
+    .optional()
+    .isEmail()
+    .withMessage("Invalid email address")
+    .custom(async (value, { req }) => {
+      await User.findOne({ email: value }).then((user) => {
+        if (user && user._id.toString() !== req.user._id.toString()) {
+          return Promise.reject(new Error("Email already exists"));
+        }
+        return true;
+      });
+    }),
+  check("phoneNumber")
+    .optional()
+    .isMobilePhone(["ar-EG", "ar-SA"])
+    .withMessage("Invalid Phone Number")
+    .custom(async (value, { req }) => {
+      await User.findOne({ phoneNumber: value }).then((user) => {
+        if (user && user._id.toString() !== req.user._id.toString()) {
+          return Promise.reject(new Error("Phone Number already exists"));
+        }
+        return true;
+      });
+    }),
+  validatorMiddleware,
+];

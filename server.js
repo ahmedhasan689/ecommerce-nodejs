@@ -1,4 +1,5 @@
 const express = require("express");
+const i18nextMiddleware = require("i18next-http-middleware");
 const path = require("path");
 const qs = require("qs");
 const dotenv = require("dotenv");
@@ -12,9 +13,9 @@ const authRoute = require("./routes/authRoute");
 const subCategoryRoute = require("./routes/subCategoryRoute");
 const brandRoute = require("./routes/brandRoute");
 const productRoute = require("./routes/productRoute");
+const reviewRoute = require("./routes/reviewRoute");
 const ApiError = require("./utils/apiError");
 const globalError = require("./middlewares/errorMiddleware");
-const i18nextMiddleware = require("i18next-http-middleware");
 const i18n = require("./locales");
 
 dotenv.config({ path: "config.env" });
@@ -49,6 +50,7 @@ app.use("/api/v1/brands", brandRoute);
 app.use("/api/v1/products", productRoute);
 app.use("/api/v1/users", userRoute);
 app.use("/api/v1/auth", authRoute);
+app.use("/api/v1/reviews", reviewRoute);
 
 app.all("/{*any}", (req, res, next) => {
   next(new ApiError(`Cannot Find This Route: ${req.originalUrl}`, 400));

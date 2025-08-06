@@ -36,6 +36,7 @@ exports.getAll = (Model, modelName = "") =>
  */
 exports.createOne = (Model) =>
   asyncHandler(async (req, res) => {
+    console.log(req.body);
     const document = await Model.create(req.body);
     res.status(201).json({ data: document });
   });
@@ -43,10 +44,15 @@ exports.createOne = (Model) =>
 /**
  * ? Get a Specific Model
  */
-exports.getOne = (Model) =>
+exports.getOne = (Model, populateOptions) =>
   asyncHandler(async (req, res, next) => {
-    const document = await Model.findById(req.params.id);
+    let query = Model.findById(req.params.id);
 
+    if (query) {
+      query = query.populate(populateOptions);
+    }
+
+    const document = await query;
     if (!document) {
       return next(
         new ApiError(

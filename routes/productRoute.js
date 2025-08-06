@@ -1,5 +1,6 @@
 const express = require("express");
 const authService = require("../services/authService");
+const reviewRoute = require("./reviewRoute");
 
 const {
   getAllProducts,
@@ -18,6 +19,9 @@ const {
 } = require("../utils/validators/productValidator");
 
 const router = express.Router();
+
+// Nested Route
+router.use("/:productId/reviews", reviewRoute);
 
 router
   .route("/")

@@ -5,5 +5,6 @@
   "email_not_found": "Sorry, no user was found associated with this email address",
   "send_email": "A verification code has been sent to your email address to complete the password reset process. Please check your inbox and follow the instructions.",
   "invalid_code": "The code you entered is invalid or has expired",
-  "code_not_verified": "Code Not Verified"
+  "code_not_verified": "Code Not Verified",
+  "account_not_active": "Your account not active"
 }

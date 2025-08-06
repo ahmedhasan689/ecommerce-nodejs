@@ -1,18 +1,11 @@
-const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
+const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
 const ApiError = require("../utils/apiError");
 const sendEmail = require("../utils/sendEmail");
 const User = require("../models/userModel");
-
-const generateToken = (payload) => {
-  const token = jwt.sign({ userId: payload }, process.env.JWT_SECRET_KEY, {
-    expiresIn: process.env.JWT_EXPIRE_TIME,
-  });
-
-  return token;
-};
+const generateToken = require("../utils/createToken");
 
 /**
  * @desc register
@@ -187,6 +180,10 @@ exports.protect = asyncHandler(async (req, res, next) => {
   const currentUser = await User.findById(decoded.userId);
   if (!currentUser) {
     return next(new ApiError(req.t("auth:user_not_found"), 401));
+  }
+
+  if (!currentUser.active) {
+    return next(new ApiError(req.t("common:account_not_active"), 401));
   }
 
   // Check password changed at for user
