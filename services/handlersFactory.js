@@ -83,6 +83,9 @@ exports.updateOne = (Model) =>
       );
     }
 
+    // Trigger "save" event
+    document.save();
+
     res.status(200).json({ data: document });
   });
 
@@ -91,16 +94,19 @@ exports.updateOne = (Model) =>
  */
 exports.deleteOne = (Model) =>
   asyncHandler(async (req, res, next) => {
-    const document = await Model.findByIdAndDelete(req.params.id);
+    const document = await Model.findById(req.params.id);
 
     if (!document) {
       return next(
         new ApiError(
           `No document found with the given ID: ${req.params.id}`,
-          400
+          404
         )
       );
     }
+
+    // Delete the document (triggers "remove" middleware)
+    await document.deleteOne();
 
     res.status(200).json({ msg: "Successfully Deleted" });
   });

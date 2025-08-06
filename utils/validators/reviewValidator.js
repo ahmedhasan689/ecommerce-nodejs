@@ -66,9 +66,9 @@ exports.deleteReviewValidator = [
   check("id")
     .isMongoId()
     .withMessage("Invalid Review ID Format")
-    .custom((value, { req }) => {
-      if (req.user.role === "user") {
-        Review.findById(value).then((review) => {
+    .custom((value, { req }) =>
+      Review.findById(value).then((review) => {
+        if (req.user.role === "user") {
           if (!review) {
             return Promise.reject(new Error("Review not found"));
           }
@@ -77,8 +77,8 @@ exports.deleteReviewValidator = [
               new Error("You are not allowed to perform this action")
             );
           }
-        });
-      }
-    }),
+        }
+      })
+    ),
   validatorMiddleware,
 ];

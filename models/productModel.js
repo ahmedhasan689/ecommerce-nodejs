@@ -68,7 +68,11 @@ const productSchema = new mongoose.Schema(
       default: 0,
     },
   },
-  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
 );
 
 // Mongoose Query Middleware
