@@ -2,9 +2,17 @@
   "success": "تمت العملية بنجاح",
   "language_changed": "تم تغيير اللغة بنجاح",
   "success_fetched": "تم جلب البيانات بنجاح",
+  "success_created": "تم الانشاء بنجاح",
+  "success_updated": "تم التعديل بنجاح",
+  "success_deleted": "تم الحذف بنجاح",
   "email_not_found": "عذراً، لم يتم العثور على أي مستخدم مرتبط بهذا البريد الإلكتروني",
   "send_email": "تم إرسال رمز التحقق إلى بريدك الإلكتروني لإتمام عملية إعادة تعيين كلمة المرور. يرجى التحقق من بريدك الإلكتروني ومتابعة التعليمات",
   "invalid_code": "الرمز المدخل غير صالح أو انتهت صلاحيته",
   "code_not_verified": "لم يتم التحقق من الكود",
-  "account_not_active": "حسابك غير فعال"
+  "account_not_active": "حسابك غير فعال",
+  "successfully_added_wishlist": "تم إضافة المنتج الى المفضلة بنجاح",
+  "successfully_removed_wishlist": "تم ازالة المنتج من المفضلة بنجاح",
+  "product_not_found": "لا يوجد منتج بهذاالمعرف",
+  "product_not_found_in_wishlist": "هذا المنتج غير موجود في المفضلة",
+  "address_not_found": "العنوان غير موجود"
 }

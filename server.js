@@ -6,14 +6,7 @@ const dotenv = require("dotenv");
 const morgan = require("morgan");
 const mongoose = require("mongoose");
 const dbConnection = require("./config/database");
-const localizationRoute = require("./routes/localizationRoute");
-const categoryRoute = require("./routes/categoryRoute");
-const userRoute = require("./routes/userRoute");
-const authRoute = require("./routes/authRoute");
-const subCategoryRoute = require("./routes/subCategoryRoute");
-const brandRoute = require("./routes/brandRoute");
-const productRoute = require("./routes/productRoute");
-const reviewRoute = require("./routes/reviewRoute");
+const mountRoutes = require("./routes");
 const ApiError = require("./utils/apiError");
 const globalError = require("./middlewares/errorMiddleware");
 const i18n = require("./locales");
@@ -43,14 +36,7 @@ app.set("query parser", (str) =>
 );
 
 // Mount Routes
-app.use("/api/v1/", localizationRoute);
-app.use("/api/v1/categories", categoryRoute);
-app.use("/api/v1/subcategories", subCategoryRoute);
-app.use("/api/v1/brands", brandRoute);
-app.use("/api/v1/products", productRoute);
-app.use("/api/v1/users", userRoute);
-app.use("/api/v1/auth", authRoute);
-app.use("/api/v1/reviews", reviewRoute);
+mountRoutes(app);
 
 app.all("/{*any}", (req, res, next) => {
   next(new ApiError(`Cannot Find This Route: ${req.originalUrl}`, 400));

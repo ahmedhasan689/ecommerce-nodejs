@@ -1,10 +1,18 @@
 {
   "success": "Successfully Done",
   "success_fetched": "Successfully fetched",
+  "success_created": "Successfully created",
+  "success_updated": "Successfully updated",
+  "success_deleted": "Successfully deleted",
   "language_changed": "Language Changed Successfully",
   "email_not_found": "Sorry, no user was found associated with this email address",
   "send_email": "A verification code has been sent to your email address to complete the password reset process. Please check your inbox and follow the instructions.",
   "invalid_code": "The code you entered is invalid or has expired",
   "code_not_verified": "Code Not Verified",
-  "account_not_active": "Your account not active"
+  "account_not_active": "Your account not active",
+  "successfully_added_wishlist": "The product has been successfully added to wishlist.",
+  "successfully_removed_wishlist": "The product has been successfully removed to wishlist.",
+  "product_not_found": "There is no product with this ID",
+  "product_not_found_in_wishlist": "This product is not in the favorites",
+  "address_not_found": "Address not found"
 }
